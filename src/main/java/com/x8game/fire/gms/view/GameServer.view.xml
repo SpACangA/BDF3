@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewConfig>
+    <Arguments/>
+    <Context/>
+    <Model>
+        <DataType name="GameServer">
+            <Property name="creationType">com.x8game.fire.gms.model.GameServer</Property>
+            <PropertyDef name="id">
+                <Property name="dataType">Integer</Property>
+                <Property name="label">服务器编号</Property>
+            </PropertyDef>
+            <PropertyDef name="name">
+                <Property></Property>
+                <Property name="label">服务器名称</Property>
+                <Validator type="required"/>
+            </PropertyDef>
+            <PropertyDef name="name_idx">
+                <Property></Property>
+                <Property name="label">合服名称</Property>
+                <Validator type="required"/>
+            </PropertyDef>
+            <PropertyDef name="region">
+                <Property name="dataType">int</Property>
+                <Property name="label">区</Property>
+                <Property name="mapping">
+                    <Property name="keyProperty">key</Property>
+                    <Property name="valueProperty">value</Property>
+                    <Property name="mapValues">
+                        <Collection>
+                            <Entity>
+                                <Property name="key">0</Property>
+                                <Property name="value">一区</Property>
+                            </Entity>
+                            <Entity>
+                                <Property name="key">1</Property>
+                                <Property name="value">二区</Property>
+                            </Entity>
+                            <Entity>
+                                <Property name="key">2</Property>
+                                <Property name="value">三区</Property>
+                            </Entity>
+                        </Collection>
+                    </Property>
+                </Property>
+            </PropertyDef>
+            <PropertyDef name="description">
+                <Property></Property>
+                <Property name="label">描述</Property>
+            </PropertyDef>
+            <PropertyDef name="ip">
+                <Property></Property>
+                <Property name="label">IP地址</Property>
+                <Validator type="required"/>
+            </PropertyDef>
+            <PropertyDef name="port">
+                <Property name="dataType">Integer</Property>
+                <Property name="label">端口</Property>
+                <Validator type="required"/>
+            </PropertyDef>
+            <PropertyDef name="queryIp">
+                <Property></Property>
+                <Property name="label">查询服务IP地址</Property>
+            </PropertyDef>
+            <PropertyDef name="queryPort">
+                <Property name="dataType">int</Property>
+                <Property name="label">查询服务端口</Property>
+            </PropertyDef>
+            <PropertyDef name="startDate">
+                <Property name="dataType">DateTime</Property>
+                <Property name="label">开服日期</Property>
+            </PropertyDef>
+            <PropertyDef name="status">
+                <Property name="dataType">int</Property>
+                <Property name="label">状态</Property>
+                <Property name="mapping">
+                    <Property name="keyProperty">key</Property>
+                    <Property name="valueProperty">value</Property>
+                    <Property name="mapValues">
+                        <Collection>
+                            <Entity>
+                                <Property name="key">-1</Property>
+                                <Property name="value">停用</Property>
+                            </Entity>
+                            <Entity>
+                                <Property name="key">0</Property>
+                                <Property name="value">推荐</Property>
+                            </Entity>
+                            <Entity>
+                                <Property name="key">1</Property>
+                                <Property name="value">正常</Property>
+                            </Entity>
+                            <Entity>
+                                <Property name="key">2</Property>
+                                <Property name="value">拥挤</Property>
+                            </Entity>
+                            <Entity>
+                                <Property name="key">3</Property>
+                                <Property name="value">爆满</Property>
+                            </Entity>
+                            <Entity>
+                                <Property name="key">4</Property>
+                                <Property name="value">维护</Property>
+                            </Entity>
+                            <Entity>
+                                <Property name="key">5</Property>
+                                <Property name="value">强烈推荐</Property>
+                            </Entity>
+                            <Entity>
+                                <Property name="key">-2</Property>
+                                <Property name="value">合服中</Property>
+                            </Entity>
+                        </Collection>
+                    </Property>
+                </Property>
+            </PropertyDef>
+            <PropertyDef name="idx">
+                <Property name="dataType">int</Property>
+                <Property name="label">序号</Property>
+            </PropertyDef>
+        </DataType>
+    </Model>
+    <View layout="padding:15">
+        <Property name="packages">font-awesome,colors</Property>
+        <DataSet id="gameServerDs">
+            <Property name="dataType">[GameServer]</Property>
+            <Property name="dataProvider">gameServerController#load</Property>
+            <Property name="pageSize">20</Property>
+        </DataSet>
+        <Panel layout="padding:5;regionPadding:10">
+            <Property name="showCaptionBar">false</Property>
+            <Buttons/>
+            <Children>
+                <ToolBar>
+                    <DataPilot>
+                        <ClientEvent name="onSubControlAction" signature="self,arg,dialogGameServer,updateAction,gameServerDs">if (arg.code ==
+                            &quot;+&quot;) {
+                            dialogGameServer.show();
+                            } else if (arg.code == &quot;-&quot;) {
+                            dorado.MessageBox.confirm(&quot;确认要删除当前记录吗？&quot;, function() {
+                            gameServerDs.getData(&quot;#&quot;).remove();
+                            updateAction.execute();
+                            });
+                            arg.processDefault = false;
+                            }
+                        </ClientEvent>
+                        <Property name="dataSet">gameServerDs</Property>
+                        <Property name="itemCodes">+,-</Property>
+                    </DataPilot>
+                    <ToolBarButton>
+                        <ClientEvent name="onClick" signature="self,arg,dialogGameServer">
+                            dialogGameServer.show()
+                        </ClientEvent>
+                        <Property name="caption">修改</Property>
+                        <Property name="iconClass">fa fa-pencil</Property>
+                    </ToolBarButton>
+                    <ToolBarButton>
+                        <ClientEvent name="onClick" signature="self,arg,gameServerDs">var gameServer =
+                            gameServerDs.getData(&quot;#&quot;);
+                            if (gameServer) {
+                            if (parent.openTab) {
+                            gameServer.get(&quot;name&quot;);
+                            }
+                            } else {
+                            dorado.MessageBox.alert(&quot;请先选择服务器。&quot;);
+                            }
+                        </ClientEvent>
+                        <Property name="caption">查看详情</Property>
+                        <Property name="iconClass">fa fa-file-text blue-text</Property>
+                    </ToolBarButton>
+                    <Fill/>
+                    <TextEditor>
+                        <ClientEvent name="onKeyDown" signature="self,arg,gameServerDg">if (arg.keyCode === 13) {
+                            return;
+                            }
+                            window.clearTimeout(self.urlQueryTimeout);
+                            self.urlQueryTimeout = window.setTimeout(function() {
+                            var key = self.get(&quot;value&quot;);
+                            if (!key) {
+                            gameServerDg.filter();
+                            } else {
+                            gameServerDg.filter([{
+                            junction: &quot;or&quot;,
+                            criterions: [{
+                            property: &quot;name&quot;,
+                            operator: &quot;like&quot;,
+                            value: key
+                            }, {
+                            property: &quot;name_idx&quot;,
+                            operator: &quot;like&quot;,
+                            value: key
+                            }]
+                            }]);
+                            }
+                            }, 250);
+                        </ClientEvent>
+                        <Property name="trigger">triggerClear</Property>
+                        <Property name="blankText">按服务器名称</Property>
+                    </TextEditor>
+                </ToolBar>
+                <DataGrid id="gameServerDg">
+                    <Property name="dataSet">gameServerDs</Property>
+                    <Property name="readOnly">true</Property>
+                    <Property name="showFilterBar">false</Property>
+                    <Property name="sortMode">serverSide</Property>
+                    <Property name="filterMode">serverSide</Property>
+                    <Property name="allowNoCurrent">false</Property>
+                    <RowNumColumn/>
+                    <DataColumn name="id">
+                        <Property name="property">id</Property>
+                        <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn name="name">
+                        <Property name="property">name</Property>
+                        <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn name="name_idx">
+                        <Property name="property">name_idx</Property>
+                        <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn name="description">
+                        <Property name="property">description</Property>
+                        <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn name="ip">
+                        <Property name="property">ip</Property>
+                        <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn name="port">
+                        <Property name="property">port</Property>
+                        <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn name="queryIp">
+                        <Property name="property">queryIp</Property>
+                        <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn name="queryPort">
+                        <Property name="property">queryPort</Property>
+                        <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn name="region">
+                        <Property name="property">region</Property>
+                        <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn name="status">
+                        <Property name="property">status</Property>
+                        <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn name="startDate">
+                        <Property name="property">startDate</Property>
+                        <Property name="align">center</Property>
+                    </DataColumn>
+                    <DataColumn name="idx">
+                        <Property name="property">idx</Property>
+                        <Property name="align">center</Property>
+                    </DataColumn>
+                </DataGrid>
+                <ToolBar layoutConstraint="bottom">
+                    <DataPilot>
+                        <Property name="dataSet">gameServerDs</Property>
+                        <Property name="itemCodes">pages,pageSize</Property>
+                    </DataPilot>
+                </ToolBar>
+            </Children>
+            <Tools/>
+        </Panel>
+        <UpdateAction id="updateAction">
+            <ClientEvent name="onSuccess" signature="self,arg,dialogGameServer">dialogGameServer.hide()
+            </ClientEvent>
+            <Property name="dataResolver">gameServerController#save</Property>
+            <Property name="successMessage">保存成功。</Property>
+            <Property name="executingMessage">正在保存……</Property>
+            <UpdateItem>
+                <Property name="dataSet">gameServerDs</Property>
+            </UpdateItem>
+        </UpdateAction>
+        <Dialog id="dialogGameServer">
+            <ClientEvent name="onHide" signature="self,arg,gameServerDs">gameServerDs.getData().cancel();
+            </ClientEvent>
+            <Property name="caption">服务器维护</Property>
+            <Property name="width">500</Property>
+            <Property name="height">400</Property>
+            <Property name="maximizeable">true</Property>
+            <Property name="minimizeable">false</Property>
+            <Buttons>
+                <Button>
+                    <ClientEvent name="onClick">self.get(&quot;parent&quot;).hide()
+                    </ClientEvent>
+                    <Property name="caption">取消</Property>
+                </Button>
+                <Button>
+                    <Property name="caption">保存</Property>
+                    <Property name="action">updateAction</Property>
+                </Button>
+            </Buttons>
+            <Children>
+                <AutoForm>
+                    <Property name="dataSet">gameServerDs</Property>
+                    <Property name="cols">*</Property>
+                    <Property name="labelPosition">left</Property>
+                    <Property name="labelAlign">right</Property>
+                    <AutoFormElement>
+                        <Property name="name">name</Property>
+                        <Property name="property">name</Property>
+                        <Editor/>
+                    </AutoFormElement>
+                    <AutoFormElement>
+                        <Property name="name">name_idx</Property>
+                        <Property name="property">name_idx</Property>
+                        <Editor/>
+                    </AutoFormElement>
+                    <AutoFormElement>
+                        <Property name="name">region</Property>
+                        <Property name="property">region</Property>
+                        <Editor/>
+                    </AutoFormElement>
+                    <AutoFormElement>
+                        <Property name="name">description</Property>
+                        <Property name="property">description</Property>
+                        <Editor/>
+                    </AutoFormElement>
+                    <AutoFormElement>
+                        <Property name="name">ip</Property>
+                        <Property name="property">ip</Property>
+                        <Editor/>
+                    </AutoFormElement>
+                    <AutoFormElement>
+                        <Property name="name">port</Property>
+                        <Property name="property">port</Property>
+                        <Editor/>
+                    </AutoFormElement>
+                    <AutoFormElement>
+                        <Property name="name">queryIp</Property>
+                        <Property name="property">queryIp</Property>
+                        <Editor/>
+                    </AutoFormElement>
+                    <AutoFormElement>
+                        <Property name="name">queryPort</Property>
+                        <Property name="property">queryPort</Property>
+                        <Editor/>
+                    </AutoFormElement>
+                    <AutoFormElement>
+                        <Property name="name">startDate</Property>
+                        <Property name="property">startDate</Property>
+                        <Editor/>
+                    </AutoFormElement>
+                    <AutoFormElement>
+                        <Property name="name">status</Property>
+                        <Property name="property">status</Property>
+                        <Editor/>
+                    </AutoFormElement>
+                    <AutoFormElement>
+                        <Property name="name">idx</Property>
+                        <Property name="property">idx</Property>
+                        <Editor/>
+                    </AutoFormElement>
+                </AutoForm>
+            </Children>
+            <Tools/>
+        </Dialog>
+    </View>
+</ViewConfig>
